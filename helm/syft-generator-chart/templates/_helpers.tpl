@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "syft-generator.name" -}}
+{{- define "syft-generator-chart.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "syft-generator.fullname" -}}
+{{- define "syft-generator-chart.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "syft-generator.chart" -}}
+{{- define "syft-generator-chart.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "syft-generator.labels" -}}
-helm.sh/chart: {{ include "syft-generator.chart" . }}
-{{ include "syft-generator.selectorLabels" . }}
+{{- define "syft-generator-chart.labels" -}}
+helm.sh/chart: {{ include "syft-generator-chart.chart" . }}
+{{ include "syft-generator-chart.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "syft-generator.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "syft-generator.name" . }}
+{{- define "syft-generator-chart.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "syft-generator-chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "syft-generator.serviceAccountName" -}}
+{{- define "syft-generator-chart.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "syft-generator.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "syft-generator-chart.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

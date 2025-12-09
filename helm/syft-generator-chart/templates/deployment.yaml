@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "syft-generator.fullname" . }}
+  name: {{ include "syft-generator-chart.fullname" . }}
   labels:
-    {{- include "syft-generator.labels" . | nindent 4 }}
+    {{- include "syft-generator-chart.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "syft-generator.selectorLabels" . | nindent 6 }}
+      {{- include "syft-generator-chart.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "syft-generator.labels" . | nindent 8 }}
+        {{- include "syft-generator-chart.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -27,7 +27,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "syft-generator.serviceAccountName" . }}
+      serviceAccountName: {{ include "syft-generator-chart.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -44,7 +44,6 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          # --- MOVED ENV BLOCK OUT HERE (Use .Values, not $.Values) ---
           env:
             # Logging
             - name: QUARKUS_LOG_LEVEL
