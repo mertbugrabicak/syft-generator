@@ -3,7 +3,7 @@ kind: Task
 metadata:
   name: {{ .Values.task.name }}
   labels:
-    {{- include "syft-generator.labels" . | nindent 4 }}
+    {{- include "syft-generator-chart.labels" . | nindent 4 }}
 spec:
   results:
     - name: sbom-url
