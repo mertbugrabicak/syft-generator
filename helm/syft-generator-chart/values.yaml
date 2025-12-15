@@ -50,7 +50,9 @@ config:
   maxConcurrent: 20
   oomRetries: 3
   # Default internal cluster URL for storage
-  storageUrl: "http://manifest-storage-service:8085"
+  storageUrl:
+    private: "http://manifest-storage-service:8085"
+    public: "http://localhost:8085"
 
   kafka:
     bootstrapServers: "kafka:9092"

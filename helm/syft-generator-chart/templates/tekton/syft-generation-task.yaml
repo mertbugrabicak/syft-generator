@@ -13,9 +13,12 @@ spec:
     - name: generation-id
       type: string
       description: "The unique ID of this generation (used for storage pathing)"
-    - name: storage-service-url
+    - name: storage-service-url-private
       type: string
       description: "The internal URL of the manifest-storage-service"
+    - name: storage-service-url-public
+      type: string
+      description: "The external URL of the manifest-storage-service to emit as result"
     - name: image
       type: string
       description: "Container image to generate manifest for"
@@ -199,14 +202,14 @@ spec:
         
         CURL_ARGS=$(cat curl_args.txt | tr '\n' ' ')
         
-        echo "Uploading to $(params.storage-service-url)..."
+        echo "Uploading to $(params.storage-service-url-private)..."
         
         # Capture Full Response
         RESPONSE=$(curl -s -f -X POST \
           -H "X-API-Key: $API_KEY" \
           -H "Content-Type: multipart/form-data" \
           $CURL_ARGS \
-          "$(params.storage-service-url)/api/v1/storage/generations/$(params.generation-id)")
+          "$(params.storage-service-url-private)/api/v1/storage/generations/$(params.generation-id)")
         
         echo "Full Response:"
         echo "$RESPONSE" | jq .
@@ -218,8 +221,17 @@ spec:
         
         echo "Filtered Response (Task Result):"
         echo "$CLEAN_RESPONSE"
-        
-        echo -n "$CLEAN_RESPONSE" > $(results.sbom-url.path)
+
+        # SWAP URLs (Internal -> Public)
+        # We use | as the delimiter for sed because URLs contain slashes /
+        PUBLIC_RESPONSE=$(echo "$CLEAN_RESPONSE" | sed "s|$(params.storage-service-url-private)|$(params.storage-service-url-public)|g")
+
+        echo "Final Public Response:"
+        echo "$PUBLIC_RESPONSE"
+
+        # Emit the public links as the Task Result
+        echo -n "$PUBLIC_RESPONSE" > $(results.sbom-url.path)
+
   workspaces:
     - name: data
       description: Workspace used to store the generated SBOMs

@@ -60,8 +60,10 @@ spec:
               value: {{ .Values.task.name | quote }}
 
             # Storage & Kafka
-            - name: SBOMER_STORAGE_URL
-              value: {{ .Values.config.storageUrl | quote }}
+            - name: SBOMER_STORAGE_URL_PRIVATE
+              value: {{ .Values.config.storageUrl.private | quote }}
+            - name: SBOMER_STORAGE_URL_PUBLIC
+              value: {{ .Values.config.storageUrl.public | quote }}
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: {{ .Values.config.kafka.bootstrapServers | quote }}
             - name: SCHEMA_REGISTRY_URL

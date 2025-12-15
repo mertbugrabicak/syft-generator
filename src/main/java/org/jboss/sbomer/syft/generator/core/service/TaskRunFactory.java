@@ -27,8 +27,13 @@ public class TaskRunFactory {
 
     // The URL of manifest-storage-service
     // This is injected into the TaskRun so the pod knows where to upload results.
-    @ConfigProperty(name = "sbomer.storage.url")
-    String storageUrl;
+    @ConfigProperty(name = "sbomer.storage.url.private")
+    String storageUrlPrivate;
+
+    // The URL of manifest-storage-service
+    // This is injected into the TaskRun so the pod knows where to upload results.
+    @ConfigProperty(name = "sbomer.storage.url.public")
+    String storageUrlPublic;
 
     private static final String LABEL_GENERATION_ID = "sbomer.jboss.org/generation-id";
     private static final String LABEL_GENERATOR_TYPE = "sbomer.jboss.org/generator-type";
@@ -42,7 +47,8 @@ public class TaskRunFactory {
         List<Param> params = new ArrayList<>();
         params.add(new ParamBuilder().withName("image").withNewValue(request.getTarget().getIdentifier()).build());
         params.add(new ParamBuilder().withName("generation-id").withNewValue(generationId).build());
-        params.add(new ParamBuilder().withName("storage-service-url").withNewValue(storageUrl).build());
+        params.add(new ParamBuilder().withName("storage-service-url-private").withNewValue(storageUrlPrivate).build());
+        params.add(new ParamBuilder().withName("storage-service-url-public").withNewValue(storageUrlPublic).build());
 
         // 2. Prepare Labels
         Map<String, String> labels = Map.of(
