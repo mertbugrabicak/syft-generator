@@ -31,6 +31,19 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+rbac:
+  # Specifies whether RBAC resources (Role, RoleBinding) should be created
+  create: true
+  # The rules required by the generator
+  rules:
+    - apiGroups: [""]
+      resources: ["pods", "pods/log", "configmaps", "secrets", "services", "persistentvolumeclaims"]
+      verbs: ["create", "get", "list", "watch", "update", "patch", "delete"]
+    # Include Tekton since we are using TaskRuns
+    - apiGroups: ["tekton.dev"]
+      resources: ["taskruns", "pipelineruns", "tasks"]
+      verbs: ["create", "get", "list", "watch", "update", "patch", "delete"]
+
 # --- APPLICATION CONFIG ---
 config:
   logLevel: INFO
