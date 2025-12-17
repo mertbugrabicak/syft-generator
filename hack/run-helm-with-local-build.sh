@@ -8,7 +8,7 @@
 set -e
 
 PROFILE=sbomer
-NAMESPACE=sbomer-default
+NAMESPACE=sbomer-test
 PLATFORM_REPO="https://github.com/sbomer-project/sbomer-platform.git"
 PLATFORM_DIR="sbomer-platform"
 LOCAL_CHART_PATH="helm/syft-generator-chart"
@@ -136,9 +136,13 @@ helm upgrade --install sbomer-release "./$PLATFORM_DIR" \
     --set syft-generator-chart.image.repository=localhost/syft-generator \
     --set syft-generator-chart.image.tag=latest \
     --set syft-generator-chart.image.pullPolicy=Never \
-    --set syft-generator-chart.config.syftAgent.image.repository=localhost/syft-agent \
-    --set syft-generator-chart.config.syftAgent.image.tag=latest \
-    --set syft-generator-chart.config.syftAgent.image.pullPolicy=Never
+    --set syft-generator-chart.task.agent.image=localhost/syft-agent \
+    --set syft-generator-chart.task.agent.tag=latest \
+    --set syft-generator-chart.task.agent.pullPolicy=Never
+
+echo "--- Forcing Rolling Restart to pick up new local image ---"
+# We ignore "not found" errors in case it's the very first install
+kubectl rollout restart deployment -n $NAMESPACE -l app.kubernetes.io/name=syft-generator-chart || true
 
 echo "--- Deployment Complete ---"
 echo "You can check status with: kubectl get pods -n $NAMESPACE"

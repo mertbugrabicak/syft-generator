@@ -163,12 +163,6 @@ spec:
     - name: upload
       image: "{{ .Values.task.agent.image }}:{{ .Values.task.agent.tag | default .Chart.AppVersion }}"
       imagePullPolicy: {{ .Values.task.agent.pullPolicy }}
-      env:
-        - name: API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: sbomer-storage-secret
-              key: api-key
       script: |
         #!/usr/bin/env bash
         set -e
@@ -203,7 +197,6 @@ spec:
         
         # Capture Full Response
         RESPONSE=$(curl -s -f -X POST \
-          -H "X-API-Key: $API_KEY" \
           -H "Content-Type: multipart/form-data" \
           $CURL_ARGS \
           "$(params.storage-service-url)/api/v1/storage/generations/$(params.generation-id)")
